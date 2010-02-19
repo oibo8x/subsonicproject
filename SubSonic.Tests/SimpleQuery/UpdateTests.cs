@@ -37,7 +37,17 @@ namespace SubSonic.Tests.Update
             setup.CreateTestTable();
             setup.LoadTestData();
         }
+        [Fact]
+        public void Update_Should_Match_All_Columns_For_Simple_Repo() {
+            var p = _db.Select.From<Product>().Where("ProductID").IsEqualTo(5).ExecuteSingle<Product>();
+            var repo = new SimpleRepository(ProviderFactory.GetProvider(), SimpleRepositoryOptions.Default);
+            p.ProductName="Changed";
+            repo.Update(p);
 
+            //pull it again
+            p = _db.Select.From<Product>().Where("ProductID").IsEqualTo(5).ExecuteSingle<Product>();
+            Assert.Equal("Changed", p.ProductName);
+        }
 
         [Fact]
         public void Update_Should_Update_En_Masse()
